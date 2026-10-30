@@ -1,0 +1,45 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="style.css"><link rel="icon" href="logo.png"><title>Votera profili</title><meta name="description" content="Votera'da bir yetenek profili."><meta name="robots" content="noindex">
+<style>
+.card{margin:18px 0;padding:22px;border-radius:22px;background:#17171B;border:1px solid #29292F;text-align:center}
+.av{width:84px;height:84px;border-radius:42px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#FF7A1A;background:#2A2522}
+.name{font-size:24px;font-weight:800;margin:4px 0}
+.bio{color:#D2D2D8;margin:6px 0 14px}
+.stats{display:flex;justify-content:center;gap:28px;margin:10px 0 18px}
+.stats b{display:block;font-size:22px}
+.stats span{color:#A3A3AD;font-size:13px}
+.btn{display:block;margin:10px 0;padding:14px;border-radius:999px;font-weight:800;text-decoration:none;text-align:center}
+.primary{background:#FF7A1A;color:#0C0C0E}
+.ghost{border:1px solid #3A3A42;color:#F4F3EE}
+.muted{color:#A3A3AD}
+</style></head><body><main><header><img src="logo.png" alt=""><a href="index.html">Votera</a></header>
+<div class="card" id="card"><p class="muted">Yükleniyor…</p></div>
+<footer>Votera · <a href="gizlilik.html">Gizlilik</a> · <a href="mailto:votera.destek@gmail.com">votera.destek@gmail.com</a></footer></main>
+<script>
+// Herkese açık profil kartı: yalnızca kullanıcı adı, biyografi, video sayısı ve toplam puan (18 yaş altı ve kapalı hesaplar gösterilmez).
+(function () {
+  var URL = 'https://zvasocgmsrumdhnbtbqz.supabase.co';
+  var KEY = 'sb_publishable_JdDW3ziux_gKexnNlVve0Q_i1OOVHTI';   // yayınlanabilir (herkese açık) anahtar
+  var APK = 'https://expo.dev/artifacts/eas/1EzTcIliyOaigEtCy7rDGOJfFon_RZGXj7dThag4W-c.apk';
+  var card = document.getElementById('card');
+  var ad = (new URLSearchParams(location.search).get('ad') || '').replace(/[^A-Za-z0-9._]/g, '').slice(0, 24);
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function fmt(n) { return Number(n || 0).toLocaleString('tr-TR'); }
+  function buttons() {
+    return '<a class="btn primary" href="votera://kullanici/' + encodeURIComponent(ad) + '">Votera\'da aç</a>' +
+           '<a class="btn ghost" href="' + APK + '">Uygulamayı indir (Android)</a>';
+  }
+  if (!ad) { card.innerHTML = '<p class="muted">Profil bulunamadı.</p>'; return; }
+  fetch(URL + '/rest/v1/rpc/public_profile', {
+    method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_username: ad })
+  }).then(function (r) { return r.json(); }).then(function (rows) {
+    var p = Array.isArray(rows) ? rows[0] : null;
+    if (!p || p.state === 'gone') { card.innerHTML = '<p class="muted">Bu profil artık yok.</p>' + buttons(); return; }
+    if (p.state !== 'ok') { card.innerHTML = '<div class="name">@' + esc(ad) + '</div><p class="muted">Bu profili görmek için Votera uygulamasını kullan.</p>' + buttons(); return; }
+    document.title = '@' + p.username + ' · Votera';
+    card.innerHTML = '<div class="av">' + esc(p.username.slice(0, 1).toUpperCase()) + '</div>' +
+      '<div class="name">@' + esc(p.username) + '</div>' + (p.bio ? '<p class="bio">' + esc(p.bio) + '</p>' : '') +
+      '<div class="stats"><div><b>' + fmt(p.videos) + '</b><span>video</span></div><div><b>' + fmt(p.points) + '</b><span>puan</span></div></div>' + buttons();
+  }).catch(function () { card.innerHTML = '<p class="muted">Şu an yüklenemedi.</p>' + buttons(); });
+})();
+</script></body></html>
