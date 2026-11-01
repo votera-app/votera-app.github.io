@@ -1,0 +1,13 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="style.css"><link rel="icon" href="logo.png"><title>Votera'yı indir</title><meta name="robots" content="noindex">
+<style>.card{margin:18px 0;padding:22px;border-radius:22px;background:#17171B;border:1px solid #29292F;text-align:center}.btn{display:block;margin:14px 0 6px;padding:14px;border-radius:999px;font-weight:800;text-decoration:none;background:#FF7A1A;color:#0C0C0E}.muted{color:#A3A3AD;font-size:14px}</style>
+</head><body><main><header><img src="logo.png" alt=""><a href="index.html">Votera</a></header>
+<div class="card"><h1>Votera deneme sürümü</h1><p class="muted">İndirme birazdan kendiliğinden başlar. Başlamazsa düğmeye dokun.</p>
+<a class="btn" id="dl" href="#">Android uygulamasını indir</a>
+<p class="muted">İndirince dosyayı aç; telefon izin isterse "Bu kaynaktan izin ver"i aç ve Yükle'ye bas.</p></div>
+<footer>Votera · <a href="gizlilik.html">Gizlilik</a></footer></main>
+<script>
+// Her zaman en güncel deneme APK'sı (yeni APK çıkınca yalnızca bu satır güncellenir; QR kod aynı kalır)
+var APK = 'https://expo.dev/artifacts/eas/wvH6TDrjWpJu-S_4rMyKJWgI7ehdsUd9mWHSy_wjCCA.apk';
+document.getElementById('dl').href = APK;
+setTimeout(function () { location.href = APK; }, 800);
+</script></body></html>
